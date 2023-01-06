@@ -109,7 +109,7 @@ if __name__ == "__main__":
     #print(res)
     #conn.commit()
 
-    app.run(host="0.0.0.0", port=8000)
+    app.run(host="0.0.0.0", port=9999)
 
     ##finally:
     #conn.close()
