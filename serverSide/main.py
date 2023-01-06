@@ -1,24 +1,26 @@
+#!/usr/bin/env python
+# coding=utf-8
+
 from flask import Flask, request
 import json
 import dbio
 import time
 import os
 import requests
+import sqlite3
 
 app = Flask(__name__)
 
 config = {}
+
 if os.path.exists('config.json'):
-    try:
-        with open('config.json') as f:
-            config = json.load(f)
+    with open('config.json') as f:
+        config = json.load(f)
 
-
-def wrap_list(ls: list)->dict:
+def wrap_list(ls: list) -> dict:
     return [dict(zip(['hostname', 'uid', 'ip_address', 'status',
                       'update_time', 'info'], i[1:]))
             for i in ls]
-
 
 @app.route('/hello')
 def hello_world():
@@ -69,7 +71,7 @@ def update_host():
     info = request.form.get('info', None)
     print(hostname, uid, ip, status, updateTime, info)
     # return 'hello_world'
-    if not(hostname and uid and ip and info):
+    if not (hostname and uid and ip and info):
         return json.dumps({'status': "fail"})
     if len(dbio.get(hostname)):
         dbio.update(hostname, uid, ip, status, updateTime, info)
@@ -87,7 +89,7 @@ def update_host():
                 print('upstream['+server_url+'] '+'TIMEOUT')
             else:
                 print('upstream['+server_url+'] '+response.text)
-                
+
     return json.dumps({'status': "success"})
 
 
@@ -97,17 +99,17 @@ def test():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    #app.run(debug=True)
+    #app.run(host="0.0.0.0", port=8000)
+    conn = sqlite3.connect('test.db')
+    ##try:
+    #    # create table
+    cursor = conn.cursor()
+    #res = cursor.execute(SQL_CREATE_TABLE)
+    #print(res)
+    #conn.commit()
 
-    # conn = sqlite3.connect('test.db')
-    # try:
-    #     # create table
-    #     cursor = conn.cursor()
-    #     res = cursor.execute(SQL_CREATE_TABLE)
-    #     print(res)
-    #     conn.commit()
+    app.run(host="0.0.0.0", port=8000)
 
-    #     app.run(host="0.0.0.0", port=8000)
-
-    # finally:
-    #     conn.close()
+    ##finally:
+    #conn.close()
